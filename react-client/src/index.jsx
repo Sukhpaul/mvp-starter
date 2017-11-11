@@ -28,15 +28,19 @@ class App extends React.Component {
 
   search(team) {
     // fetch topic from server
+    console.log('Searching for data');
     fetch('/stats', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
         },
+      body: JSON.stringify({
+        team: team
+      }),
     })
      .then(data => {
-       console.log(data);
+       console.log('---------', data);
      })
      .catch(() => {
        console.log('Data not found');
@@ -46,7 +50,7 @@ class App extends React.Component {
   render () {
     return (<div>
       <h1>NFL Standings</h1>
-      <Record stats={this.state.stats} onSearch={this.search.bind(this)}/>
+      <Record onSearch={this.search.bind(this)}/>
     </div>)
   }
 }

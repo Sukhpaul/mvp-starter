@@ -11,6 +11,8 @@ let app = express();
 // UNCOMMENT FOR REACT
 app.use(express.static(__dirname + '/../react-client/dist'));
 
+app.use(bodyParser.json());
+
 // UNCOMMENT FOR ANGULAR
 // app.use(express.static(__dirname + '/../angular-client'));
 // app.use(express.static(__dirname + '/../node_modules'));
@@ -53,7 +55,7 @@ app.get('/stats', function (req, res) {
 
 //search for data from API and add to db
 app.post('/stats', (req, err) => {
-  console.log(req);
+  console.log('------------', req.body);
 });
 
 
