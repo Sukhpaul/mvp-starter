@@ -1,7 +1,8 @@
-var mongoose = require('mongoose');
+//jshint esversion: 6
+let mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 
-var db = mongoose.connection;
+let db = mongoose.connection;
 
 db.on('error', function() {
   console.log('mongoose connection error');
@@ -11,21 +12,57 @@ db.once('open', function() {
   console.log('mongoose connected successfully');
 });
 
-var itemSchema = mongoose.Schema({
-  quantity: Number,
-  description: String
+let statsSchema = mongoose.Schema({
+  Team: String,
+  Wins: Number,
+  Loses: Number,
+  Ties: Number,
+  Overall_Standings: Number
 });
 
-var Item = mongoose.model('Item', itemSchema);
+let Stats = mongoose.model('Stats', statsSchema);
 
-var selectAll = function(callback) {
-  Item.find({}, function(err, items) {
+let selectAll = function(callback) {
+  Stats.find({}, function(err, statss) {
     if(err) {
       callback(err, null);
     } else {
-      callback(null, items);
+      callback(null, statss);
     }
   });
 };
 
+//save data from API response
+let save = (data) => {
+  let newData = {
+    Team: data.overallteamstandings.teamstandingsentry[0].team.City + data.overallteamstandings.teamstandingsentry[0].team.Name,
+    Wins: data.overallteamstandings.teamstandingsentry[2].Wins['#text'],
+    Loses: data.overallteamstandings.teamstandingsentry[2].Losses['#text'],
+    Ties: data.overallteamstandings.teamstandingsentry[2].Ties['#text'],
+    Overall_Standings: data.overallteamstandings.teamstandingsentry[1]
+  };
+
+  let teamStats = new Stats(newData);
+
+  teamStats.save()
+           .then(() => {
+            console.log('Team stats were saved');
+           })
+           .catch(() => {
+            console.log('Team stats were not saved');
+           });
+
+};
+
+
+
+
+
+
+
+
+
+
+
 module.exports.selectAll = selectAll;
+module.exports.save = save;

@@ -1,23 +1,24 @@
+//jshint esversion: 6
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import List from './components/List.jsx';
+import Record from './components/Record.jsx';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      items: []
-    }
+      stats: []
+    };
   }
 
   componentDidMount() {
     $.ajax({
-      url: '/items', 
+      url: '/stats', 
       success: (data) => {
         this.setState({
-          items: data
-        })
+          stats: data
+        });
       },
       error: (err) => {
         console.log('err', err);
@@ -25,10 +26,27 @@ class App extends React.Component {
     });
   }
 
+  search(team) {
+    // fetch topic from server
+    fetch('/stats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+        },
+    })
+     .then(data => {
+       console.log(data);
+     })
+     .catch(() => {
+       console.log('Data not found');
+     });
+  }
+
   render () {
     return (<div>
-      <h1>Item List</h1>
-      <List items={this.state.items}/>
+      <h1>NFL Standings</h1>
+      <Record stats={this.state.stats} onSearch={this.search.bind(this)}/>
     </div>)
   }
 }
