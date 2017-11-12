@@ -13,15 +13,29 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // $.ajax({
+    //   url: '/stats', 
+    //   success: (data) => {
+    //     this.setState({
+    //       stats: data
+    //     });
+    //   },
+    //   error: (err) => {
+    //     console.log('err', err);
+    //   }
+    // });
+
     $.ajax({
-      url: '/stats', 
-      success: (data) => {
-        this.setState({
-          stats: data
-        });
+      type: "GET",
+      url: 'https://api.mysportsfeeds.com/v1.0/pull/nfl/latest/overall_team_standings.json',
+      dataType: 'json',
+      async: false,
+      headers: {
+        "Authorization": 'Basic U3VraHBhdWw6U3VraHBhdWw='
       },
-      error: (err) => {
-        console.log('err', err);
+      success: function (data){
+        console.log(data);
+        alert('Thanks for your comment!'); 
       }
     });
   }
