@@ -1,6 +1,7 @@
 //jshint esversion: 6
 let mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/players');
+mongoose.Promise = global.Promise;
 
 let db = mongoose.connection;
 
@@ -12,44 +13,70 @@ db.once('open', function() {
   console.log('mongoose connected successfully');
 });
 
-let statsSchema = mongoose.Schema({
+let playersSchema = mongoose.Schema({
   Team: String,
-  Wins: Number,
-  Loses: Number,
-  Ties: Number,
-  Overall_Standings: Number
+  Name: String,
+  Position: String,
+  Ppg: Number,
+  Ast: Number,
+  Rebs: Number
 });
 
-let Stats = mongoose.model('Stats', statsSchema);
+let Players = mongoose.model('Players', playersSchema);
 
-let selectAll = function(callback) {
-  Stats.find({}, function(err, statss) {
-    if(err) {
-      callback(err, null);
-    } else {
-      callback(null, statss);
-    }
-  });
+// let selectAll = function(callback) {
+//   Players.find({}, function(err, players) {
+//     if(err) {
+//       callback(err, null);
+//     } else {
+//       callback(null, players);r
+//     }
+//   });
+// };
+
+let findTeam = (team) => {
+  console.log('Finding Team');
+  return Players.find({"Team": team})
+      .then((team) => {
+        console.log('Team found');
+        return team;
+      })
+      .catch(() => {
+        console.log('players not found');
+      });
+};
+
+let findPlayer = (player) => {
+  console.log('Finding Player');
+  return Players.find({"Name": player})
+      .then((player) => {
+        console.log('Player found');
+        return player;
+      })
+      .catch(() => {
+        console.log('players not found');
+      });
 };
 
 //save data from API response
-let save = (data) => {
-  let newData = {
-    Team: data.overallteamstandings.teamstandingsentry[0].team.City + data.overallteamstandings.teamstandingsentry[0].team.Name,
-    Wins: data.overallteamstandings.teamstandingsentry[2].Wins['#text'],
-    Loses: data.overallteamstandings.teamstandingsentry[2].Losses['#text'],
-    Ties: data.overallteamstandings.teamstandingsentry[2].Ties['#text'],
-    Overall_Standings: data.overallteamstandings.teamstandingsentry[1]
+let save = (player) => {
+  let newPlayer = {
+    Team: player.team,
+    Name: player.name,
+    Position: player.Position,
+    Ppg: player.Ppg,
+    Ast: player.Ast,
+    Rebs: player.Rebs
   };
 
-  let teamStats = new Stats(newData);
+  let playerStats = new Players(newPlayer);
 
-  teamStats.save()
+  playerStats.save()
            .then(() => {
-            console.log('Team stats were saved');
+            console.log('Player stats were saved');
            })
            .catch(() => {
-            console.log('Team stats were not saved');
+            console.log('Player stats were not saved');
            });
 
 };
@@ -64,5 +91,6 @@ let save = (data) => {
 
 
 
-module.exports.selectAll = selectAll;
+module.exports.findTeam = findTeam;
 module.exports.save = save;
+module.exports.findPlayer = findPlayer;

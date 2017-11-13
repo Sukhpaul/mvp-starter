@@ -19,7 +19,16 @@ class Record extends React.Component {
 
   search() {
     this.props.onSearch(this.state.team);
-    console.log(this.state.team)
+  }
+
+  playerChange(event) {
+    this.setState({
+      player: event.target.value
+    });
+  }
+
+  playerSearch() {
+    this.props.searchPlayer(this.state.player);
   }
 
   render() {
@@ -27,7 +36,9 @@ class Record extends React.Component {
     <div>
     Find Team <input value={this.state.team} onChange={this.onChange.bind(this)}/>
     <button onClick={this.search.bind(this)}>Search</button>
-    <h4> Most Recent Standings </h4>
+    <br/>
+    Find Player <input value={this.state.player} onChange={this.playerChange.bind(this)}/>
+    <button onClick={this.playerSearch.bind(this)}>Search</button>
     </div>
   )
   }
